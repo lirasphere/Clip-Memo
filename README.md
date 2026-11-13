@@ -2,7 +2,7 @@
 
 コードブロックや追跡番号などを、一時的に退避しておくための自分用クリップボードメモです。
 
-https://lirasphere.github.io/Clip-Memo/
+https://lyrac.jp/Clip-Memo/
 
 ## 特徴
 
