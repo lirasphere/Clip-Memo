@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一時メモ</title>
+<meta name="theme-color" content="#f6f7f9">
+<meta name="color-scheme" content="light">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="一時メモ">
+<style>
+:root{--bg:#f6f7f9;--sf:#fff;--ink:#1a1d21;--sub:#6b7280;--line:#e2e5ea;--ac:#0b6e6e;--code:#f0f2f5;--red:#b42318;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.app{max-width:720px;margin:0 auto;padding:0 16px calc(110px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px}
+.top{display:flex;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:17px}
+.hb{background:none;border:0;border-radius:8px;padding:6px 8px;font-size:14px;color:var(--sub)}
+.sync{display:inline-flex;align-items:center;gap:6px}
+.sync i{width:8px;height:8px;border-radius:50%;background:#9aa3ae}
+.sync[data-s=ok] i{background:#2e9e6b}.sync[data-s=syncing] i{background:#d9a000}.sync[data-s=error] i{background:var(--red)}
+#tags{display:flex;gap:8px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+#tags::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--sf);border-radius:999px;padding:3px 12px;font-size:13px}
+.chip small{color:var(--sub);margin-left:5px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}.chip.on small{color:#c9ced6}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.head{display:flex;justify-content:space-between;gap:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{display:inline-flex;background:#eceff3;border-radius:999px;font-size:12px;line-height:24px}
+.tag button{border:0;background:none;padding:0 4px 0 10px;font-size:12px}
+.tag button+button{padding:0 9px 0 2px;color:var(--sub);font-size:14px}
+.add{border:1px dashed #c4cad2;background:none;color:var(--sub);border-radius:999px;font-size:12px;line-height:22px;padding:0 10px}
+.ti{width:8em;font-size:16px;border:1px solid var(--ac);border-radius:8px;padding:1px 8px;background:#fff;outline:0}
+.meta{font-size:12px;color:var(--sub);white-space:nowrap;line-height:24px}
+.code{margin:10px 0;padding:10px 12px;background:var(--code);border-radius:8px;font:13px/20px var(--mono);white-space:pre;tab-size:4;overflow:auto;max-height:12em}
+.code code{font:inherit}
+.row2{display:flex;gap:8px}
+.btn{height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--sf);font-weight:600}
+.copy{flex:1;border-color:var(--ac);color:var(--ac)}.copy.done{background:var(--ac);color:#fff}
+.ghost{border-color:transparent;background:none;color:var(--sub);font-weight:500}
+.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.danger{color:var(--red)}
+#empty{text-align:center;color:var(--sub);padding:56px 0}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 65%,rgba(246,247,249,0));pointer-events:none}
+.bar div{max-width:720px;margin:0 auto;display:flex;gap:8px;pointer-events:auto}
+#main{flex:1;height:56px;border:0;border-radius:14px;background:var(--ac);color:#fff;font-size:17px;font-weight:700}
+#main:active{transform:scale(.99)}
+#alt{height:56px;padding:0 18px;border-radius:14px;border:1px solid var(--line);background:var(--sf);font-weight:600}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;display:flex;gap:14px;z-index:20;white-space:nowrap}
+#toast button{background:none;border:0;color:#8fd9d0;font-weight:700;padding:0}
+dialog{border:0;border-radius:16px;padding:0;width:min(92vw,480px);background:var(--sf);color:var(--ink);box-shadow:0 10px 40px rgba(0,0,0,.18)}
+dialog::backdrop{background:rgba(20,24,30,.35)}
+.sheet{padding:20px}.sheet h2{margin:0 0 10px;font-size:17px}.sheet h3{margin:18px 0 4px;font-size:14px}
+.sheet p{margin:0 0 8px;font-size:13px;color:var(--sub)}.sheet a{color:var(--ac)}
+.f{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;background:#fff}
+textarea.f{height:200px;font-family:var(--mono);white-space:pre;resize:vertical}
+.fr{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.fr form{display:contents}
+label.ck{display:flex;gap:8px;align-items:center;font-size:14px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="top">
+      <h1>一時メモ</h1>
+      <div>
+        <button class="hb sync" id="sync" hidden><i></i><span id="st">同期</span></button>
+        <button class="hb" id="gear">設定</button>
+      </div>
+    </div>
+    <nav id="tags" hidden></nav>
+  </header>
+  <main id="list"></main>
+  <p id="empty" hidden>メモはありません。<br>下のボタンで、クリップボードの内容を追加できます。</p>
+</div>
+<div class="bar"><div>
+  <button id="main">クリップボードから追加</button>
+  <button id="alt">手入力</button>
+</div></div>
+<div id="toast" role="status" hidden></div>
+
+<dialog id="manual"><div class="sheet">
+  <h2>貼り付けて追加</h2>
+  <textarea class="f" id="mt" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="ここにコードを貼り付け"></textarea>
+  <div class="fr"><form method="dialog"><button class="btn ghost">キャンセル</button></form><button class="btn pri" id="ok">追加</button></div>
+</div></dialog>
+
+<dialog id="set"><div class="sheet">
+  <h2>設定</h2>
+  <label class="ck"><input type="checkbox" id="cut">コピーしたらメモを消去する</label>
+  <h3>端末間の同期</h3>
+  <p>GitHubのシークレットGistに保存します。<a href="https://github.com/settings/tokens/new?scopes=gist&description=clipboard-memo" target="_blank" rel="noopener">gist権限だけのトークン</a>を作って貼り付けてください。他の端末でも同じトークンを入れると同期されます。</p>
+  <input class="f" id="tk" type="password" placeholder="ghp_..." autocomplete="off">
+  <p id="msg" style="margin-top:8px"></p>
+  <div class="fr"><form method="dialog"><button class="btn ghost">閉じる</button></form><button class="btn pri" id="go">保存して同期</button></div>
+</div></dialog>
+
+<script>
+const $=s=>document.querySelector(s),K='ctm.items',S='ctm.set',F='clipboard-memo.json';
+const h=(t,p={},...k)=>{const e=document.createElement(t);Object.assign(e,p);e.append(...k);return e};
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const clean=i=>i&&i.id?{id:String(i.id),text:String(i.text||''),tags:Array.isArray(i.tags)?i.tags.map(String):[],c:+i.c||0,u:+i.u||0,d:!!i.d}:null;
+let items=ld(K,[]).map(clean).filter(Boolean),set={token:'',gist:'',cut:false,...ld(S,{})},filter=null,editing=false,pend=false;
+const save=()=>{localStorage.setItem(K,JSON.stringify(items));localStorage.setItem(S,JSON.stringify(set))};
+const live=()=>items.filter(i=>!i.d);
+const commit=()=>{save();draw();queue()};
+const fmt=t=>{const d=new Date(t),s=d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});return d.toDateString()==new Date().toDateString()?s:`${d.getMonth()+1}/${d.getDate()} ${s}`};
+
+let tt;function toast(m,undo){const t=$('#toast');t.replaceChildren(m);if(undo)t.append(h('button',{textContent:'元に戻す',onclick:()=>{undo();t.hidden=true}}));t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,undo?5000:1800)}
+async function copy(s){try{await navigator.clipboard.writeText(s);return true}catch{const a=h('textarea',{value:s});a.style.cssText='position:fixed;opacity:0';document.body.append(a);a.select();const ok=document.execCommand('copy');a.remove();return ok}}
+
+function put(text){const n=Date.now();items.push({id:n.toString(36)+Math.random().toString(36).slice(2,6),text:text.replace(/\s+$/,''),tags:filter?[filter]:[],c:n,u:n,d:false});commit()}
+function rm(id,msg='消去しました'){
+  const it=items.find(i=>i.id==id);if(!it)return;const b={text:it.text,tags:it.tags};
+  Object.assign(it,{d:true,text:'',tags:[],u:Date.now()});commit();
+  toast(msg,()=>{const c=items.find(i=>i.id==id);if(c){Object.assign(c,{d:false,...b,u:Date.now()});commit()}});
+}
+async function paste(){try{const t=await navigator.clipboard.readText();if(!t.trim())return toast('クリップボードが空です');put(t);toast('追加しました')}catch{$('#manual').showModal();$('#mt').focus()}}
+
+const chip=(l,n,on,f)=>h('button',{className:'chip'+(on?' on':''),onclick:f},l,h('small',{textContent:n}));
+function card(it){
+  const tags=h('div',{className:'tags'},...it.tags.map(t=>h('span',{className:'tag'},
+    h('button',{textContent:'#'+t,onclick:()=>{filter=t;draw()}}),
+    h('button',{textContent:'×',onclick:()=>{it.tags=it.tags.filter(x=>x!=t);it.u=Date.now();commit()}}))));
+  const add=h('button',{className:'add',textContent:'＋タグ'});
+  add.onclick=()=>{
+    editing=true;const inp=h('input',{className:'ti',placeholder:'タグ',maxLength:24,enterKeyHint:'done'});
+    const done=()=>{if(!editing)return;editing=false;const v=inp.value.trim().replace(/^#/,'');
+      if(v&&!it.tags.includes(v)){it.tags.push(v);it.u=Date.now();commit()}else{inp.replaceWith(add);if(pend){pend=false;draw()}}};
+    inp.onkeydown=e=>{if(e.key=='Enter'&&!e.isComposing)done();if(e.key=='Escape'){inp.value='';done()}};
+    inp.onblur=done;add.replaceWith(inp);inp.focus();
+  };
+  tags.append(add);
+  const cp=h('button',{className:'btn copy',textContent:'コピー'});
+  cp.onclick=async()=>{
+    if(!await copy(it.text))return toast('コピーできませんでした');
+    if(set.cut)return rm(it.id,'コピーして消去しました');
+    cp.textContent='コピーしました';cp.classList.add('done');setTimeout(()=>{cp.textContent='コピー';cp.classList.remove('done')},1200);
+  };
+  return h('article',{className:'card'},
+    h('div',{className:'head'},tags,h('span',{className:'meta',textContent:`${it.text.split('\n').length}行 ${fmt(it.c)}`})),
+    h('pre',{className:'code'},h('code',{textContent:it.text})),
+    h('div',{className:'row2'},cp,h('button',{className:'btn ghost',textContent:'消去',onclick:()=>rm(it.id)})));
+}
+function draw(){
+  if(editing){pend=true;return}
+  const cnt={};live().forEach(i=>i.tags.forEach(t=>cnt[t]=(cnt[t]||0)+1));
+  if(filter&&!cnt[filter])filter=null;
+  const bar=$('#tags');bar.hidden=!Object.keys(cnt).length;
+  bar.replaceChildren(chip('すべて',live().length,!filter,()=>{filter=null;draw()}),...Object.keys(cnt).map(t=>chip('#'+t,cnt[t],filter==t,()=>{filter=t;draw()})));
+  const v=live().filter(i=>!filter||i.tags.includes(filter)).sort((a,b)=>b.c-a.c);
+  $('#list').replaceChildren(...v.map(card));$('#empty').hidden=v.length>0;
+}
+
+/* 同期（GitHub Gist・新しい更新が勝つ） */
+const gh=async(p,o={})=>{const r=await fetch('https://api.github.com'+p,{cache:'no-store',...o,headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+set.token,...(o.body&&{'Content-Type':'application/json'})}});if(!r.ok)throw Object.assign(new Error(r.status==401?'トークンが無効です':'GitHubエラー '+r.status),{s:r.status});return r.json()};
+const sig=l=>JSON.stringify([...l].sort((a,b)=>a.id<b.id?-1:1));
+function merge(a,b){const m=new Map(),old=Date.now()-12096e5;for(const i of[...a,...b]){const c=m.get(i.id);if(!c||i.u>c.u)m.set(i.id,i)}return[...m.values()].filter(i=>!(i.d&&i.u<old))}
+async function doSync(retry=1){
+  if(!set.gist){
+    for(let p=1;p<6&&!set.gist;p++){const l=await gh(`/gists?per_page=100&page=${p}`),g=l.find(x=>x.files&&x.files[F]);if(g)set.gist=g.id;if(l.length<100)break}
+    if(!set.gist)set.gist=(await gh('/gists',{method:'POST',body:JSON.stringify({description:'一時メモ sync',public:false,files:{[F]:{content:'{"items":[]}'}}})})).id;
+    save();
+  }
+  let r=[];
+  try{const g=await gh('/gists/'+set.gist),f=g.files[F];if(f){const t=f.truncated?await(await fetch(f.raw_url,{cache:'no-store'})).text():f.content;r=(JSON.parse(t).items||[]).map(clean).filter(Boolean)}}
+  catch(e){if(e.s==404&&retry){set.gist='';return doSync(0)}throw e}
+  const m=merge(items,r),ch=sig(m)!=sig(items);items=m;if(ch){save();draw()}
+  if(sig(m)!=sig(r))await gh('/gists/'+set.gist,{method:'PATCH',body:JSON.stringify({files:{[F]:{content:JSON.stringify({items:m})}}})});
+}
+let busy=0,again=0,qt;
+const queue=()=>{if(set.token){clearTimeout(qt);qt=setTimeout(sync,1200)}};
+function stat(s,m=''){const b=$('#sync');b.hidden=!set.token;b.dataset.s=s;$('#st').textContent={syncing:'同期中',ok:'同期済み',error:'同期エラー',idle:'同期'}[s];$('#msg').textContent=m}
+async function sync(){
+  if(!set.token)return;if(busy){again=1;return}busy=1;stat('syncing');
+  try{await doSync();stat('ok','最終同期 '+fmt(Date.now()))}catch(e){stat('error',navigator.onLine?e.message:'オフラインです')}
+  busy=0;if(again){again=0;sync()}
+}
+
+/* 操作 */
+$('#main').onclick=paste;
+$('#alt').onclick=()=>{$('#manual').showModal();$('#mt').focus()};
+$('#ok').onclick=()=>{const t=$('#mt').value;if(t.trim())put(t);$('#mt').value='';$('#manual').close()};
+$('#gear').onclick=()=>{$('#tk').value=set.token;$('#cut').checked=set.cut;$('#set').showModal()};
+$('#cut').onchange=e=>{set.cut=e.target.checked;save()};
+$('#go').onclick=()=>{const t=$('#tk').value.trim();if(t!=set.token)set.gist='';set.token=t;save();t?sync():stat('idle','同期はオフです')};
+$('#sync').onclick=sync;
+document.querySelectorAll('dialog').forEach(d=>d.onclick=e=>{if(e.target==d)d.close()});
+document.addEventListener('paste',e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;const t=e.clipboardData.getData('text');if(t.trim()){e.preventDefault();put(t);toast('追加しました')}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
+addEventListener('online',sync);
+navigator.serviceWorker?.register('sw.js');
+draw();stat('idle');sync();
+</script>
+</body>
+</html>
